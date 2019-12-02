@@ -184,10 +184,10 @@ def export_logs(docker_compose):
         # date_format = "%Y%m%d_%H%M%S"
         # log_filename = "{}_{}.docker.log".format(__name__, f"{datetime.datetime.now():{date_format}}")
         log_filename = 'compose.log'
-        log = os.path.join(log_dir, log_filename)
-        logging.info('Exporting docker-compose logs to %s ...', log)
+        log_path = os.path.join(log_dir, log_filename)
+        logging.info('Exporting docker-compose logs to %s ...', log_path)
         # @todo: (re-)create log file on first (session) call, afterwards append
-        docker_compose.execute("logs --no-color > {}", log)
+        docker_compose.execute("logs --no-color > {}".format(log_path))
         
         # feed docker log to logging (will at least be feed to junit by pytest)
         # @fixme: prevent double log line headers
