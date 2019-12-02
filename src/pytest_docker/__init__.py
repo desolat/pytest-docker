@@ -9,6 +9,7 @@ import re
 import subprocess
 import time
 import timeit
+import logging
 
 
 def execute(command, success_codes=(0,)):
@@ -150,12 +151,17 @@ def get_docker_services(
         docker_compose_file, docker_compose_project_name
     )
 
-    # Spawn containers.
-    docker_compose.execute('up --build -d')
+    try:
+        # Spawn containers.
+        docker_compose.execute('up --build -d')
+    except Exception as ex:
+        export_logs(docker_compose)
+        raise ex
 
     # Let test(s) run.
     yield Services(docker_compose)
 
+    export_logs(docker_compose)
     # Clean up.
     docker_compose.execute('down -v')
 
@@ -169,6 +175,24 @@ def docker_services(
         docker_compose_file, docker_compose_project_name
     ) as ds:
         yield ds
+
+
+def export_logs(docker_compose):
+    # https://github.com/AndreLouisCaron/pytest-docker/issues/13#issuecomment-345497583
+    log_dir = os.getenv('PYTEST_DOCKER_LOG_DIR')
+    if log_dir is not None:
+        # date_format = "%Y%m%d_%H%M%S"
+        # log_filename = "{}_{}.docker.log".format(__name__, f"{datetime.datetime.now():{date_format}}")
+        log_filename = 'compose.log'
+        log = os.path.join(log_dir, log_filename)
+        logging.info('Exporting docker-compose logs to %s ...', log)
+        # @todo: (re-)create log file on first (session) call, afterwards append
+        docker_compose.execute("logs --no-color > {}", log)
+        # feed docker log to logging (will at least be feed to junit by pytest)
+        # @fixme: prevent double log line headers
+        # with open(log, 'r') as compose_log:
+        #     for line in compose_log:
+        #         logging.info(line)
 
 
 __all__ = (

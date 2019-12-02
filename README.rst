@@ -12,6 +12,13 @@ containers.  Specify all containers you need and ``pytest-docker`` will use
 .. _`py.test`: http://doc.pytest.org/
 .. _`Docker Compose`: https://docs.docker.com/compose/
 
+Configuration
+=============
+
+Environment variables:
+
+PYTEST_DOCKER_LOG_DIR: path to a directory where the Compose application logs with be exported to (file name: `compose.log`)
+
 Usage
 =====
 
