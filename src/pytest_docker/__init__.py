@@ -188,6 +188,7 @@ def export_logs(docker_compose):
         logging.info('Exporting docker-compose logs to %s ...', log)
         # @todo: (re-)create log file on first (session) call, afterwards append
         docker_compose.execute("logs --no-color > {}", log)
+        
         # feed docker log to logging (will at least be feed to junit by pytest)
         # @fixme: prevent double log line headers
         # with open(log, 'r') as compose_log:
