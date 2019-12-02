@@ -17,7 +17,8 @@ Configuration
 
 Environment variables:
 
-PYTEST_DOCKER_LOG_DIR: path to a directory where the Compose application logs with be exported to (file name: `compose.log`)
+``PYTEST_DOCKER_LOG_DIR``: path to a directory where the Compose application
+logs with be exported to (file name: ``compose.log``)
 
 Usage
 =====
