@@ -193,8 +193,7 @@ def export_logs(docker_compose):
     log_dir = os.getenv('PYTEST_DOCKER_LOG_DIR')
     if log_dir is not None:
         # date_format = "%Y%m%d_%H%M%S"
-        # log_filename = "{}_{}.docker.log".format(__name__, f"{datetime.datetime.now():{date_format}}")
-        log_filename = 'compose.log'
+        log_filename = "{}.docker.log".format(docker_compose._compose_project_name)
         log_path = os.path.join(log_dir, log_filename)
         logging.info('Exporting docker-compose logs to %s ...', log_path)
         # @todo: (re-)create log file on first (session) call, afterwards append
