@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
 import attr
 import contextlib
 import os
@@ -163,7 +162,7 @@ def get_docker_services(
 
     export_logs(docker_compose)
     # Clean up.
-    docker_compose.execute('down -v')
+    docker_compose.execute('down -v --remove-orphans')
 
 
 @pytest.fixture(scope='session')
