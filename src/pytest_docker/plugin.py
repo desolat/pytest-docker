@@ -4,6 +4,7 @@ import re
 import subprocess
 import time
 import timeit
+import logging
 
 import attr
 
@@ -146,14 +147,19 @@ def get_docker_services(docker_compose_file, docker_compose_project_name):
         docker_compose_file, docker_compose_project_name
     )
 
-    # Spawn containers.
-    docker_compose.execute("up --build -d")
+    try:
+        # Spawn containers.
+        docker_compose.execute("up --build -d")
+    except Exception as ex:
+        export_logs(docker_compose)
+        raise ex
 
     # Let test(s) run.
     yield Services(docker_compose)
 
+    export_logs(docker_compose)
     # Clean up.
-    docker_compose.execute("down -v")
+    docker_compose.execute('down -v --remove-orphans')
 
 
 @pytest.fixture(scope="session")
@@ -165,3 +171,33 @@ def docker_services(docker_compose_file, docker_compose_project_name):
         docker_compose_file, docker_compose_project_name
     ) as docker_service:
         yield docker_service
+
+
+@pytest.fixture(scope='session')
+def monkeypatch_session():
+    '''
+    @see: https://github.com/pytest-dev/pytest/issues/1872#issuecomment-375108891
+    '''
+
+    from _pytest.monkeypatch import MonkeyPatch
+    monkey_patch = MonkeyPatch()
+    yield monkey_patch
+    monkey_patch.undo()
+
+
+def export_logs(docker_compose):
+    # https://github.com/AndreLouisCaron/pytest-docker/issues/13#issuecomment-345497583
+    log_dir = os.getenv('PYTEST_DOCKER_LOG_DIR')
+    if log_dir is not None:
+        # date_format = "%Y%m%d_%H%M%S"
+        log_filename = "{}.docker.log".format(docker_compose._compose_project_name)
+        log_path = os.path.join(log_dir, log_filename)
+        logging.info('Exporting docker-compose logs to %s ...', log_path)
+        # @todo: (re-)create log file on first (session) call, afterwards append
+        docker_compose.execute("logs --no-color > {}".format(log_path))
+
+        # feed docker log to logging (will at least be feed to junit by pytest)
+        # @fixme: prevent double log line headers
+        # with open(log, 'r') as compose_log:
+        #     for line in compose_log:
+        #         logging.info(line)
