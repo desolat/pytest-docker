@@ -1,36 +1,32 @@
-# -*- coding: utf-8 -*-
-
 sudo: required
 services:
-  - docker
-
+- docker
 language: python
-
 python:
-  - "2.7"
-  - "3.5"
-
+- '3.5'
+- '3.6'
+- '3.7'
+- '3.8'
 before_install:
-  - pip --version
-  - docker --version
-  - docker-compose --version
-
+- docker --version
+- docker-compose --version
 install:
-  - pip install tox
-  - pip install coveralls
-
+- pip install --upgrade pip setuptools
 before_script:
-  # Pre-cache images to prevent timeout in service availability checks.
-  - docker-compose -f tests/docker-compose.yml pull
-  - docker-compose -f tests/docker-compose.yml build
-
+- docker-compose -f tests/docker-compose.yml pull
+- docker-compose -f tests/docker-compose.yml build
 script:
-  - if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then tox -e py27; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then tox -e py35; fi
-
+- python setup.py test
 after_script:
-  # Always leave a clean slate.
-  - docker-compose -f tests/docker-compose.yml down
-
-after_success:
-  - coveralls
+- docker-compose -f tests/docker-compose.yml down
+deploy:
+  provider: pypi
+  on:
+    tags: true
+    branch: master
+  distributions: sdist bdist_wheel
+  skip_existing: true
+  skip_cleanup: true
+  user: __token__
+  password:
+    secure: bM4aTCjIoaU+vOn2cazrqbgFfSjNAgXvi3JiYTr03mi1/PV2EFqKnu7oyVvQCJTGE7/fsbnyH+CcQMgqmw4xViSqegtPw6I0banjPj9vQ0E/SKpUnpb/1mIlbp9tKBCZy+zMpVLbTsABxgwLT+AJqVTCRI54Lspzv4cqhZBYQNzDaCk2kzv1Ewxb1w3EP6mXCZ72VW+0MRHGHceVhTsFdqHlVVEQd48sXgdkt1B8aG0y17cKNBK2XFC/YiEdplzTpwNddRCdSpgrY5ty66fCh7kuy0cwUeGL/U+L5AwM3qdnHD5+QnJA2fj8i6EO70/1PMgstbFtTOFJoODDYTXHxQukqdal0fr47FBS4pulSslUjfrX18gn6E67FkPZ+nYY97d+kpkCBdnMSlBCU6qUhbmIfCrHE12ho1ALKvr8C6jCoLdVI6LLt8YSGIJNe62CqrvHml7EI3IATT7qDQDH52HClZITpLO/e0UQ9J3JlvkNNs/kPkkjQVq/pq/z2Qrvc9miq0NOvJ7lXatqoct+0QHlgQ0XfM0NIw7NVQbi8w/m0BA1cVC3zly6a1O3Apd4CkVrdKm2A+/w7j6sDywBDxUf3g613CrdnvUvLxl3XfEY1CBUv9NzBLh5PukIN+vSEBgUNoLJT/P/GeE0iypkAuHFRxlBcvNpCdIoKhchX+I=
