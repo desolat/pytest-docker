@@ -3,4 +3,5 @@ from .plugin import (
     docker_compose_project_name,
     docker_ip,
     docker_services,
+    monkeypatch_session,
 )
