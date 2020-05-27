@@ -113,6 +113,12 @@ your tests if you need a particular project name.
 Start all services from the docker compose file (`docker-compose up`).
 After test are finished, shutdown all services (`docker-compose down`).
 
+## Options
+
+Optional features can be enabled/configured with environment variables:
+
+- `PYTEST_DOCKER_LOG_DIR`: directory to export logs of the Docker Compose application under test to
+
 
 # Contributing
 This pytest plug-in and its source code are made available to you under a MIT

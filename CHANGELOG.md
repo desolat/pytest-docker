@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.8
+- export container logs to directory specified by `PYTEST_DOCKER_LOG_DIR`
+- fixture for monkeypatching a whole session: `monkeypatch_session`
+
 ## Version 0.7.2
 - Changes:
 	- Update package README
