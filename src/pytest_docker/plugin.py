@@ -91,6 +91,7 @@ class Services:
 
         return match
 
+
     def wait_until_responsive(self, check, timeout, pause, clock=timeit.default_timer):
         """Wait until a service is responsive."""
 
@@ -150,9 +151,9 @@ def get_docker_services(docker_compose_file, docker_compose_project_name):
     try:
         # Spawn containers.
         docker_compose.execute("up --build -d")
-    except Exception as ex:
+    except Exception as exception:
         export_logs(docker_compose)
-        raise ex
+        raise exception
 
     # Let test(s) run.
     yield Services(docker_compose)
