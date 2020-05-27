@@ -91,7 +91,6 @@ class Services:
 
         return match
 
-
     def wait_until_responsive(self, check, timeout, pause, clock=timeit.default_timer):
         """Wait until a service is responsive."""
 
