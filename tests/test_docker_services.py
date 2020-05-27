@@ -49,7 +49,7 @@ def test_docker_services():
             shell=True,
         ),
         mock.call(
-            'docker-compose -f "docker-compose.yml" -p "pytest123" down -v',
+            'docker-compose -f "docker-compose.yml" -p "pytest123" down -v --remove-orphans',
             stderr=subprocess.STDOUT,
             shell=True,
         ),
@@ -97,7 +97,7 @@ def test_docker_services_unused_port():
             stderr=subprocess.STDOUT,
         ),
         mock.call(
-            'docker-compose -f "docker-compose.yml" -p "pytest123" down -v',
+            'docker-compose -f "docker-compose.yml" -p "pytest123" down -v --remove-orphans',
             shell=True,
             stderr=subprocess.STDOUT,
         ),
