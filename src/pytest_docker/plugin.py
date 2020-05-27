@@ -91,6 +91,22 @@ class Services:
 
         return match
 
+    def endpoint_for(self, service, container_port):
+        pytest_docker_host = os.getenv('PYTEST_DOCKER_HOST')
+        if not pytest_docker_host:
+            # not set: default pytest-docker behavior: services reachable on DOCKER_HOST on exposed port
+            host = get_docker_ip()
+            port = self.port_for(service, container_port)
+        elif pytest_docker_host == '_internal':
+            # tests run in same docker network: services reachable on their internal hostnames and ports
+            host = service
+            port = container_port
+        else:
+            # host explicitly given: services reachable on that host and exposed port
+            host = pytest_docker_host
+            port = self.port_for(service, container_port)
+        return (host, port)
+
     def wait_until_responsive(self, check, timeout, pause, clock=timeit.default_timer):
         """Wait until a service is responsive."""
 

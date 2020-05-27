@@ -117,7 +117,17 @@ After test are finished, shutdown all services (`docker-compose down`).
 
 Optional features can be enabled/configured with environment variables:
 
-- `PYTEST_DOCKER_LOG_DIR`: directory to export logs of the Docker Compose application under test to
+### `PYTEST_DOCKER_LOG_DIR`
+
+If given the complete logs of the Docker Compose application under test will be exported there.
+
+### `PYTEST_DOCKER_HOST`
+
+If `pytest-docker` tests are run in containers themselves, the endpoints where the Compose application services under test may be reachable may differ. The `docker_services` fixture provides a method `endpoint_for` which will return the reachable endpoint (host and port) depending on the setting of `PYTEST_DOCKER_HOST`:
+
+  * unset: host is `127.0.0.1` (localhost) or `DOCKER_HOST` if set and the ports are the exposed ports.
+  * `_internal`: tests are expected to be run in the same bridged network as the Compose application under test. Thus the services are to be reached by their internal Docker host names (Compose service names) and their internal container ports.
+  * Any other value is expected to be a reachable hostname or IP. This may be the case if the tests are run in a container on the `host` network. The ports are the exposed ports.
 
 
 # Contributing

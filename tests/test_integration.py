@@ -1,6 +1,6 @@
 import shutil
 import subprocess
-from os import path
+from os import path, getenv
 
 import requests
 from requests.exceptions import ConnectionError
@@ -21,6 +21,12 @@ def test_main_fixtures_work(docker_ip, docker_services):
 
     # Build URL to service listening on random port.
     url = "http://%s:%d/" % (docker_ip, docker_services.port_for("hello", 80))
+
+    assert not getenv('DOCKER_HOST')
+    assert not getenv('PYTEST_DOCKER_HOST')
+    endpoint_host, endpoint_port = docker_services.endpoint_for("hello", 80)
+    assert endpoint_host == '127.0.0.1'
+    assert endpoint_port > 80
 
     docker_services.wait_until_responsive(
         check=lambda: is_responsive(url), timeout=30.0, pause=0.1
