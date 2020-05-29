@@ -1,0 +1,11 @@
+version: '2'
+
+networks:
+  pytest_docker_tests:
+    external:
+      name: pytest_docker_tests
+
+services:
+  httpbin:
+    networks:
+      - pytest_docker_tests
