@@ -1,5 +1,3 @@
-import shutil
-import subprocess
 import logging
 from os import path, environ, getenv
 
@@ -38,11 +36,11 @@ def is_responsive(url):
         return False
 
 
-def test_main_fixtures_work(docker_ip, docker_services):
+def test_endpoint_for(docker_services):
     # Build URL to service listening on random port.
     endpoint = docker_services.endpoint_for('httpbin', 80)
     url = "http://%s:%d/" % endpoint
-    logging.debug('Waiting for %s to be responsive ...' % url)
+    logging.debug('Waiting for %s to be responsive ...', url)
     docker_services.wait_until_responsive(
         check=lambda: is_responsive(url), timeout=30.0, pause=0.1
     )
